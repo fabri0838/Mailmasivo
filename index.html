@@ -3,371 +3,308 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AV MERCH — Envío Email Masivo</title>
+<title>AV MERCH — Email Masivo</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #05080f; --surface: #0c1020; --border: #1a2040;
-    --blue: #4285F4; --blue2: #5b9cf6; --white: #e8eaf0;
-    --muted: #445; --accent: #a8d4ff; --danger: #ff5252;
-    --yellow: #ffd54f; --green: #69f0ae;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--white); font-family:'Syne',sans-serif; min-height:100vh; }
-  body::before {
-    content:''; position:fixed; inset:0;
-    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(66,133,244,0.12), transparent);
-    pointer-events:none; z-index:0;
-  }
-  .container { max-width:920px; margin:0 auto; padding:40px 24px; position:relative; z-index:1; }
-
-  /* HEADER */
-  header { margin-bottom:40px; }
-  .logo-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-  .logo { background:var(--blue); color:#fff; font-weight:800; font-size:12px; padding:5px 12px; letter-spacing:2px; }
-  .g-badge { background:#0d1530; border:1px solid var(--blue); color:var(--blue2); font-family:'DM Mono',monospace; font-size:11px; padding:4px 10px; }
-  h1 { font-size:clamp(26px,5vw,44px); font-weight:800; letter-spacing:-1.5px; line-height:1; }
-  h1 span { color:var(--blue2); }
-  .subtitle { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:6px; letter-spacing:1px; }
-
-  /* AUTH BANNER */
-  .auth-banner {
-    background:var(--surface); border:1px solid var(--border);
-    padding:20px 24px; margin-bottom:14px;
-    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
-  }
-  .auth-info { display:flex; align-items:center; gap:12px; }
-  .auth-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); flex-shrink:0; }
-  .auth-dot.connected { background:var(--green); box-shadow:0 0 8px var(--green); }
-  .auth-text { font-family:'DM Mono',monospace; font-size:12px; }
-  .auth-text strong { color:var(--white); }
-  .auth-text span { color:var(--muted); display:block; font-size:10px; margin-top:2px; }
-
-  /* PANELS */
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
-  @media(max-width:640px){ .grid{ grid-template-columns:1fr; } }
-
-  .panel { background:var(--surface); border:1px solid var(--border); padding:22px; position:relative; }
-  .panel::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:var(--blue); }
-  .panel-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--blue2); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
-
-  textarea, input[type="text"], input[type="email"] {
-    width:100%; background:#070d1e; border:1px solid var(--border);
-    color:var(--white); font-family:'DM Mono',monospace; font-size:13px;
-    padding:12px; resize:vertical; outline:none; transition:border-color 0.2s; line-height:1.6;
-  }
-  textarea:focus, input:focus { border-color:var(--blue); }
-  textarea { min-height:120px; }
-  input[type="text"], input[type="email"] { resize:none; }
-
-  .field-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:6px; margin-top:14px; }
-  .field-label:first-of-type { margin-top:0; }
-
-  .hint { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:8px; line-height:1.7; }
-  .hint strong { color:var(--accent); }
-
-  /* STATS */
-  .stats-bar { display:flex; align-items:center; background:var(--surface); border:1px solid var(--border); margin-bottom:14px; }
-  .stat { padding:16px 20px; border-right:1px solid var(--border); text-align:center; }
-  .stat-num { font-size:28px; font-weight:800; color:var(--accent); line-height:1; }
-  .stat-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
-  .progress-wrap { flex:1; padding:16px 24px; }
-  .progress-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-bottom:8px; display:flex; justify-content:space-between; }
-  .progress-bar { background:#0d1530; height:6px; }
-  .progress-fill { height:100%; background:var(--blue); transition:width 0.5s ease; width:0%; }
-
-  /* DELAY */
-  .delay-bar {
-    background:var(--surface); border:1px solid var(--border);
-    padding:14px 22px; margin-bottom:14px;
-    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-  }
-  .delay-label { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); flex-shrink:0; }
-  .delay-opts { display:flex; gap:8px; flex-wrap:wrap; }
-  .delay-btn {
-    font-family:'DM Mono',monospace; font-size:11px;
-    padding:5px 12px; background:transparent; border:1px solid var(--border);
-    color:var(--muted); cursor:pointer; transition:all 0.15s;
-  }
-  .delay-btn.active { border-color:var(--blue); color:var(--blue2); background:#0d1530; }
-  .delay-warn { font-family:'DM Mono',monospace; font-size:10px; color:var(--yellow); margin-left:auto; }
-
-  /* QUEUE CARD */
-  .queue-card { background:var(--surface); border:1px solid var(--border); padding:24px; margin-bottom:14px; display:none; }
-  .queue-card.active { display:block; }
-  .qc-top { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
-  .qc-name { font-size:20px; font-weight:800; }
-  .qc-email { font-family:'DM Mono',monospace; font-size:13px; color:var(--blue2); margin-top:3px; }
-  .qc-index { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:4px; }
-  .tag { display:inline-block; background:#0d1530; color:var(--blue2); font-family:'DM Mono',monospace; font-size:10px; padding:3px 10px; letter-spacing:1px; border:1px solid var(--border); }
-  .preview-section { border:1px solid var(--border); overflow:hidden; }
-  .preview-header { background:#0d1530; padding:10px 14px; font-family:'DM Mono',monospace; font-size:11px; display:flex; gap:20px; }
-  .preview-field { color:var(--muted); }
-  .preview-field strong { color:var(--white); }
-  .preview-body { padding:14px; font-family:'DM Mono',monospace; font-size:12px; line-height:1.8; color:#b0bcd0; white-space:pre-wrap; word-break:break-word; max-height:130px; overflow-y:auto; }
-
-  /* PROGRESS SENDING */
-  .sending-overlay {
-    display:none; position:fixed; inset:0; background:rgba(5,8,15,0.85);
-    align-items:center; justify-content:center; z-index:100; flex-direction:column; gap:16px;
-  }
-  .sending-overlay.active { display:flex; }
-  .sending-spinner { width:48px; height:48px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin 0.8s linear infinite; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .sending-text { font-family:'DM Mono',monospace; font-size:13px; color:var(--blue2); }
-
-  /* BUTTONS */
-  .btn-row { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
-  .btn { display:inline-flex; align-items:center; gap:8px; font-family:'Syne',sans-serif; font-size:13px; font-weight:700; padding:12px 22px; cursor:pointer; border:none; letter-spacing:0.5px; transition:all 0.15s; text-decoration:none; }
-  .btn-primary { background:var(--blue); color:#fff; }
-  .btn-primary:hover { background:#5b9cf6; transform:translateY(-1px); }
-  .btn-primary:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
-  .btn-send-all { background:linear-gradient(135deg, var(--blue), #7c4dff); color:#fff; }
-  .btn-send-all:hover { transform:translateY(-1px); filter:brightness(1.1); }
-  .btn-send-all:disabled { opacity:0.3; cursor:not-allowed; transform:none; filter:none; }
-  .btn-skip { background:transparent; border:1px solid var(--border); color:var(--muted); }
-  .btn-skip:hover { border-color:var(--white); color:var(--white); }
-  .btn-load { background:transparent; border:1px solid var(--blue); color:var(--blue2); }
-  .btn-load:hover { background:var(--blue); color:#fff; }
-  .btn-restart { background:transparent; border:1px solid var(--muted); color:var(--muted); }
-  .btn-restart:hover { border-color:var(--danger); color:var(--danger); }
-  .btn-connect { background:var(--blue); color:#fff; font-size:13px; font-weight:700; padding:10px 20px; font-family:'Syne',sans-serif; cursor:pointer; border:none; letter-spacing:0.5px; transition:all 0.15s; }
-  .btn-connect:hover { background:#5b9cf6; }
-  .btn-disconnect { background:transparent; border:1px solid var(--danger); color:var(--danger); font-size:12px; font-weight:700; padding:8px 14px; font-family:'Syne',sans-serif; cursor:pointer; letter-spacing:0.5px; transition:all 0.15s; }
-  .btn-disconnect:hover { background:var(--danger); color:#fff; }
-
-  /* EMPTY / DONE */
-  .empty-state { text-align:center; padding:50px 20px; border:1px dashed var(--border); margin-bottom:14px; }
-  .empty-icon { font-size:44px; margin-bottom:14px; opacity:0.4; }
-  .empty-title { font-size:18px; font-weight:700; color:var(--muted); margin-bottom:8px; }
-  .empty-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
-
-  .done-state { text-align:center; padding:50px 20px; background:var(--surface); border:1px solid var(--green); margin-bottom:14px; display:none; }
-  .done-icon { font-size:50px; margin-bottom:12px; }
-  .done-title { font-size:24px; font-weight:800; color:var(--green); margin-bottom:6px; }
-  .done-sub { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
-
-  /* HISTORY */
-  .history-panel { background:var(--surface); border:1px solid var(--border); padding:22px; }
-  .history-list { max-height:200px; overflow-y:auto; }
-  .history-item { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid #0d1530; font-family:'DM Mono',monospace; font-size:11px; }
-  .history-item:last-child { border-bottom:none; }
-  .h-dot { width:6px; height:6px; border-radius:50%; background:var(--blue2); flex-shrink:0; }
-  .h-dot.skipped { background:var(--muted); }
-  .h-dot.error { background:var(--danger); }
-  .h-name { color:var(--white); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .h-email { color:var(--muted); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px; }
-  .h-status { flex-shrink:0; }
-  .h-status.sent { color:var(--green); }
-  .h-status.skipped { color:var(--muted); }
-  .h-status.error { color:var(--danger); }
-  .empty-history { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; padding:20px; }
-
-  ::-webkit-scrollbar { width:4px; }
-  ::-webkit-scrollbar-track { background:#070d1e; }
-  ::-webkit-scrollbar-thumb { background:var(--border); }
-
-  .notice {
-    background:#0a0f20; border:1px solid #1a2a50; border-left:3px solid var(--yellow);
-    padding:12px 16px; font-family:'DM Mono',monospace; font-size:11px; color:#b0b8c8;
-    margin-bottom:14px; line-height:1.7;
-  }
-  .notice strong { color:var(--yellow); }
-
-  /* MODO MANUAL */
-  .mode-bar { display:flex; gap:0; margin-bottom:14px; background:var(--surface); border:1px solid var(--border); overflow:hidden; }
-  .mode-btn { flex:1; padding:12px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; background:transparent; border:none; color:var(--muted); cursor:pointer; transition:all 0.15s; text-align:center; }
-  .mode-btn.active { background:var(--blue); color:#fff; }
-  .mode-btn:not(.active):hover { background:#0d1530; color:var(--white); }
+:root {
+  --bg:#05080f; --surface:#0c1020; --border:#1a2040;
+  --blue:#4285F4; --blue2:#5b9cf6; --white:#e8eaf0;
+  --muted:#4a5568; --accent:#a8d4ff; --danger:#ff5252;
+  --yellow:#ffd54f; --green:#69f0ae;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--white);font-family:'Syne',sans-serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(66,133,244,0.12),transparent);pointer-events:none;z-index:0;}
+.container{max-width:920px;margin:0 auto;padding:40px 24px;position:relative;z-index:1;}
+header{margin-bottom:40px;}
+.logo-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.logo{background:var(--blue);color:#fff;font-weight:800;font-size:12px;padding:5px 12px;letter-spacing:2px;}
+.badge{background:#0d1530;border:1px solid var(--blue);color:var(--blue2);font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;}
+h1{font-size:clamp(26px,5vw,44px);font-weight:800;letter-spacing:-1.5px;line-height:1;}
+h1 span{color:var(--blue2);}
+.subtitle{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:1px;}
+.notice{background:#0a0f20;border:1px solid #1a2a50;border-left:3px solid var(--yellow);padding:12px 16px;font-family:'DM Mono',monospace;font-size:11px;color:#b0b8c8;margin-bottom:14px;line-height:1.7;}
+.notice strong{color:var(--yellow);}
+.auth-banner{background:var(--surface);border:1px solid var(--border);padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.auth-info{display:flex;align-items:center;gap:12px;}
+.auth-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:all 0.3s;}
+.auth-dot.on{background:var(--green);box-shadow:0 0 8px var(--green);}
+.auth-text strong{display:block;font-family:'DM Mono',monospace;font-size:12px;}
+.auth-text span{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.mode-bar{display:flex;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);overflow:hidden;}
+.mode-btn{flex:1;padding:12px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all 0.15s;text-align:center;}
+.mode-btn.on{background:var(--blue);color:#fff;}
+.mode-btn:not(.on):hover{background:#0d1530;color:var(--white);}
+.stats-bar{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);margin-bottom:14px;}
+.stat{padding:16px 20px;border-right:1px solid var(--border);text-align:center;}
+.stat-num{font-size:28px;font-weight:800;color:var(--accent);line-height:1;}
+.stat-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+.pw{flex:1;padding:16px 24px;}
+.pl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;}
+.pb{background:#0d1530;height:6px;}
+.pf{height:100%;background:var(--blue);transition:width 0.5s ease;width:0%;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+@media(max-width:640px){.grid{grid-template-columns:1fr;}}
+.panel{background:var(--surface);border:1px solid var(--border);padding:22px;position:relative;}
+.panel::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--blue);}
+.panel-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--blue2);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.fl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;margin-top:12px;}
+.fl:first-of-type{margin-top:0;}
+textarea,input[type=text]{width:100%;background:#070d1e;border:1px solid var(--border);color:var(--white);font-family:'DM Mono',monospace;font-size:13px;padding:12px;outline:none;transition:border-color 0.2s;line-height:1.6;}
+textarea{resize:vertical;min-height:110px;}
+textarea:focus,input:focus{border-color:var(--blue);}
+.hint{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:8px;line-height:1.7;}
+.hint strong{color:var(--accent);}
+.delay-bar{background:var(--surface);border:1px solid var(--border);padding:14px 22px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.delay-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex-shrink:0;}
+.delay-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.db{font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.db.on{border-color:var(--blue);color:var(--blue2);background:#0d1530;}
+.delay-warn{font-family:'DM Mono',monospace;font-size:10px;color:var(--yellow);margin-left:auto;}
+.btn-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:12px 22px;cursor:pointer;border:none;letter-spacing:0.5px;transition:all 0.15s;text-decoration:none;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:#5b9cf6;transform:translateY(-1px);}
+.btn-blue:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+.btn-grad{background:linear-gradient(135deg,var(--blue),#7c4dff);color:#fff;}
+.btn-grad:hover{transform:translateY(-1px);filter:brightness(1.1);}
+.btn-grad:disabled{opacity:0.3;cursor:not-allowed;transform:none;filter:none;}
+.btn-out{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-out:hover{border-color:var(--white);color:var(--white);}
+.btn-red{background:transparent;border:1px solid var(--muted);color:var(--muted);}
+.btn-red:hover{border-color:var(--danger);color:var(--danger);}
+.btn-con{background:var(--blue);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:10px 20px;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-con:hover{background:#5b9cf6;}
+.btn-dis{background:transparent;border:1px solid var(--danger);color:var(--danger);font-family:'Syne',sans-serif;font-weight:700;font-size:12px;padding:8px 14px;cursor:pointer;transition:all 0.15s;}
+.btn-dis:hover{background:var(--danger);color:#fff;}
+.empty-state{text-align:center;padding:50px 20px;border:1px dashed var(--border);margin-bottom:14px;}
+.ei{font-size:44px;margin-bottom:14px;opacity:0.4;}
+.et{font-size:18px;font-weight:700;color:var(--muted);margin-bottom:8px;}
+.es{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.card{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:14px;display:none;}
+.card.on{display:block;}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.cn{font-size:20px;font-weight:800;}
+.ce{font-family:'DM Mono',monospace;font-size:13px;color:var(--blue2);margin-top:3px;}
+.ci{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px;}
+.tag{display:inline-block;background:#0d1530;color:var(--blue2);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;letter-spacing:1px;border:1px solid var(--border);}
+.preview{border:1px solid var(--border);overflow:hidden;}
+.ph{background:#0d1530;padding:10px 14px;font-family:'DM Mono',monospace;font-size:11px;display:flex;gap:20px;flex-wrap:wrap;}
+.pf2{color:var(--muted);}
+.pf2 strong{color:var(--white);}
+.pb2{padding:14px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;color:#b0bcd0;white-space:pre-wrap;word-break:break-word;max-height:130px;overflow-y:auto;}
+.card-btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.done-state{text-align:center;padding:50px 20px;background:var(--surface);border:1px solid var(--green);margin-bottom:14px;display:none;}
+.done-icon{font-size:50px;margin-bottom:12px;}
+.done-title{font-size:24px;font-weight:800;color:var(--green);margin-bottom:6px;}
+.done-sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);}
+.history-panel{background:var(--surface);border:1px solid var(--border);padding:22px;}
+.history-list{max-height:200px;overflow-y:auto;}
+.hi{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #0d1530;font-family:'DM Mono',monospace;font-size:11px;}
+.hi:last-child{border-bottom:none;}
+.hd{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.hd.sent{background:var(--blue2);}
+.hd.skipped{background:var(--muted);}
+.hd.error{background:var(--danger);}
+.hn{color:var(--white);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hem{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;}
+.hs.sent{color:var(--green);}
+.hs.skipped{color:var(--muted);}
+.hs.error{color:var(--danger);}
+.empty-history{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:20px;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,0.9);align-items:center;justify-content:center;z-index:100;flex-direction:column;gap:16px;}
+.overlay.on{display:flex;}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ot{font-family:'DM Mono',monospace;font-size:13px;color:var(--blue2);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#070d1e;}
+::-webkit-scrollbar-thumb{background:var(--border);}
 </style>
 </head>
 <body>
 
-<div class="sending-overlay" id="sendingOverlay">
-  <div class="sending-spinner"></div>
-  <div class="sending-text" id="sendingText">Enviando...</div>
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <div class="ot" id="overlayText">Enviando...</div>
 </div>
 
 <div class="container">
-
   <header>
     <div class="logo-row">
       <div class="logo">AV MERCH</div>
-      <div class="g-badge">Gmail API</div>
+      <div class="badge">Gmail API</div>
     </div>
-    <h1>Envío <span>Email</span><br>Masivo</h1>
-    <div class="subtitle">// autenticá tu Gmail → cargá contactos → enviá automático con delay</div>
+    <h1>Email <span>Masivo</span></h1>
+    <div class="subtitle">// conectá Gmail → cargá contactos → enviá automático con delay</div>
   </header>
 
-  <!-- NOTICE -->
   <div class="notice">
-    <strong>ℹ️ Límites recomendados:</strong> Gmail permite ~500 emails/día en cuentas normales y hasta 2.000 en Google Workspace.
-    Recomendamos usar delay entre envíos para evitar ser marcado como spam. Los contactos aquí son personas que te dieron su mail.
+    <strong>ℹ️ Límites gratuitos de Gmail:</strong> 500 emails/día con Gmail normal · 2000/día con Google Workspace.
+    Usá delay entre envíos para evitar filtros de spam.
   </div>
 
-  <!-- AUTH -->
-  <div class="auth-banner" id="authBanner">
+  <div class="auth-banner">
     <div class="auth-info">
       <div class="auth-dot" id="authDot"></div>
       <div class="auth-text">
         <strong id="authLabel">No conectado a Gmail</strong>
-        <span id="authEmail">Autenticá tu cuenta para enviar emails directamente</span>
+        <span id="authSub">Autenticá tu cuenta para enviar emails directamente</span>
       </div>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-      <button class="btn-connect" id="btnConnect" onclick="connectGmail()">Conectar Gmail</button>
-      <button class="btn-disconnect" id="btnDisconnect" onclick="disconnectGmail()" style="display:none">Desconectar</button>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn-con" id="btnCon">Conectar Gmail</button>
+      <button class="btn-dis" id="btnDis" style="display:none">Desconectar</button>
     </div>
   </div>
 
-  <!-- MODO -->
   <div class="mode-bar">
-    <button class="mode-btn active" id="modeAuto" onclick="setMode('auto')">⚡ AUTOMÁTICO (Gmail API)</button>
-    <button class="mode-btn" id="modeManual" onclick="setMode('manual')">✉️ MANUAL (mailto:)</button>
+    <button class="mode-btn on" id="modeA">⚡ AUTOMÁTICO (Gmail API)</button>
+    <button class="mode-btn" id="modeM">✉️ MANUAL (mailto:)</button>
   </div>
 
-  <!-- STATS -->
   <div class="stats-bar">
-    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">TOTAL</div></div>
-    <div class="stat"><div class="stat-num" id="statEnviados" style="color:var(--green)">0</div><div class="stat-label">ENVIADOS</div></div>
-    <div class="stat"><div class="stat-num" id="statOmitidos" style="color:var(--muted)">0</div><div class="stat-label">OMITIDOS</div></div>
-    <div class="stat"><div class="stat-num" id="statErrores" style="color:var(--danger)">0</div><div class="stat-label">ERRORES</div></div>
-    <div class="progress-wrap">
-      <div class="progress-label"><span>PROGRESO</span><span id="progressPct">0%</span></div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="stat"><div class="stat-num" id="sTotal">0</div><div class="stat-label">TOTAL</div></div>
+    <div class="stat"><div class="stat-num" id="sEnv" style="color:var(--green)">0</div><div class="stat-label">ENVIADOS</div></div>
+    <div class="stat"><div class="stat-num" id="sOmi" style="color:var(--muted)">0</div><div class="stat-label">OMITIDOS</div></div>
+    <div class="stat"><div class="stat-num" id="sErr" style="color:var(--danger)">0</div><div class="stat-label">ERRORES</div></div>
+    <div class="pw">
+      <div class="pl"><span>PROGRESO</span><span id="pPct">0%</span></div>
+      <div class="pb"><div class="pf" id="pFill"></div></div>
     </div>
   </div>
 
-  <!-- INPUTS -->
   <div class="grid">
     <div class="panel">
       <div class="panel-label">// 01 — Contactos</div>
-      <textarea id="contactsInput" placeholder="Nombre, Email&#10;Juan Pérez, juan@empresa.com&#10;María López, maria@negocio.com&#10;Carlos Soto, carlos@gmail.com&#10;&#10;— un contacto por línea&#10;— formato: Nombre, Email"></textarea>
+      <textarea id="inContacts" placeholder="Empresa X, contacto arroba empresa.com&#10;Juan Perez, juan arroba gmail.com&#10;Maria Lopez, maria arroba empresa.com&#10;&#10;— un contacto por linea&#10;— formato: Nombre, email"></textarea>
       <div class="hint">
-        ✦ Un contacto por línea: <strong>Nombre, <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7a1f171b13163a1e15171314131554191517">[email&#160;protected]</a></strong><br>
-        ✦ Podés copiar y pegar desde Excel directamente<br>
+        ✦ Formato: <strong>Nombre, email</strong> — un contacto por línea<br>
+        ✦ Podés pegar desde Excel directamente<br>
         ✦ Se ignoran líneas con formato inválido
       </div>
     </div>
     <div class="panel">
       <div class="panel-label">// 02 — Asunto y Mensaje</div>
-      <div class="field-label">ASUNTO</div>
-      <input type="text" id="subjectInput" placeholder="Uniformes corporativos a medida — AV MERCH">
-      <div class="field-label" style="margin-top:12px;">CUERPO DEL EMAIL</div>
-      <textarea id="messageInput" placeholder="Hola {nombre},&#10;&#10;Mi nombre es Fabrizio y te escribo de AV MERCH, empresa especializada en uniformes corporativos a medida para empresas de todos los rubros.&#10;&#10;Me gustaría contarte sobre nuestras propuestas. ¿Tenés disponibilidad para una breve charla?&#10;&#10;Saludos,&#10;Fabrizio&#10;AV MERCH" style="min-height:110px;"></textarea>
+      <div class="fl">ASUNTO</div>
+      <input type="text" id="inSubject" placeholder="Uniformes corporativos a medida — AV MERCH">
+      <div class="fl">CUERPO DEL EMAIL</div>
+      <textarea id="inMessage" placeholder="Hola {nombre},&#10;&#10;Mi nombre es Fabrizio y te escribo de AV MERCH, empresa especializada en uniformes corporativos a medida.&#10;&#10;Me gustaria contarte sobre nuestras propuestas. Tenes disponibilidad para una breve charla?&#10;&#10;Saludos,&#10;Fabrizio&#10;AV MERCH"></textarea>
       <div class="hint">
         ✦ Usá <strong>{nombre}</strong> para personalizar el saludo<br>
-        ✦ El mensaje se envía tal como lo escribís<br>
-        ✦ Los saltos de línea se respetan en el email
+        ✦ Saltos de línea y formato se respetan
       </div>
     </div>
   </div>
 
-  <!-- DELAY -->
   <div class="delay-bar" id="delayBar">
     <div class="delay-label">DELAY ENTRE ENVÍOS:</div>
     <div class="delay-opts">
-      <button class="delay-btn" onclick="setDelay(0)" id="d0">Sin delay</button>
-      <button class="delay-btn active" onclick="setDelay(3)" id="d3">3 seg</button>
-      <button class="delay-btn" onclick="setDelay(5)" id="d5">5 seg</button>
-      <button class="delay-btn" onclick="setDelay(10)" id="d10">10 seg</button>
-      <button class="delay-btn" onclick="setDelay(30)" id="d30">30 seg</button>
+      <button class="db" id="d0" onclick="setDelay(0)">Sin delay</button>
+      <button class="db on" id="d3" onclick="setDelay(3)">3 seg</button>
+      <button class="db" id="d5" onclick="setDelay(5)">5 seg</button>
+      <button class="db" id="d10" onclick="setDelay(10)">10 seg</button>
+      <button class="db" id="d30" onclick="setDelay(30)">30 seg</button>
     </div>
-    <div class="delay-warn" id="delayWarn">⚡ Recomendado: 3-10 seg para evitar spam</div>
+    <div class="delay-warn" id="dWarn">⚡ Recomendado: 3-10 seg</div>
   </div>
 
-  <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
-    <button class="btn btn-load" onclick="loadContacts()">▶ Cargar Contactos</button>
-    <button class="btn btn-send-all" id="btnSendAll" onclick="startSendAll()" disabled>⚡ Enviar Todos Automático</button>
-    <button class="btn btn-restart" onclick="resetAll()">↺ Reiniciar</button>
+  <div class="btn-row">
+    <button class="btn btn-blue" id="btnLoad">▶ Cargar Contactos</button>
+    <button class="btn btn-grad" id="btnAll" disabled>⚡ Enviar Todos Automático</button>
+    <button class="btn btn-red" id="btnReset">↺ Reiniciar</button>
   </div>
 
-  <!-- EMPTY -->
   <div class="empty-state" id="emptyState">
-    <div class="empty-icon">📧</div>
-    <div class="empty-title">Sin contactos cargados</div>
-    <div class="empty-sub">Ingresá contactos arriba y hacé click en "Cargar Contactos"</div>
+    <div class="ei">📧</div>
+    <div class="et">Sin contactos cargados</div>
+    <div class="es">Ingresá los contactos arriba y hacé click en "Cargar Contactos"</div>
   </div>
 
-  <!-- QUEUE CARD -->
-  <div class="queue-card" id="queueCard">
-    <div class="qc-top">
+  <div class="card" id="card">
+    <div class="card-top">
       <div>
-        <div class="qc-name" id="qcName">—</div>
-        <div class="qc-email" id="qcEmail">—</div>
-        <div class="qc-index" id="qcIndex">—</div>
+        <div class="cn" id="cName">—</div>
+        <div class="ce" id="cEmail">—</div>
+        <div class="ci" id="cIdx">—</div>
       </div>
-      <div class="tag" id="qcTag">PRÓXIMO</div>
+      <div class="tag" id="cTag">PRÓXIMO</div>
     </div>
-    <div class="preview-section">
-      <div class="preview-header">
-        <div class="preview-field">ASUNTO: <strong id="previewSubject">—</strong></div>
-        <div class="preview-field">PARA: <strong id="previewTo">—</strong></div>
+    <div class="preview">
+      <div class="ph">
+        <div class="pf2">ASUNTO: <strong id="pSubject">—</strong></div>
+        <div class="pf2">PARA: <strong id="pTo">—</strong></div>
       </div>
-      <div class="preview-body" id="previewBody">—</div>
+      <div class="pb2" id="pBody">—</div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" id="btnSendOne" onclick="sendOne()">✉️ Enviar Este Email</button>
-      <button class="btn btn-skip" onclick="skipContact()">→ Omitir</button>
+    <div class="card-btns">
+      <button class="btn btn-blue" id="btnOne">✉️ Enviar Este Email</button>
+      <button class="btn btn-out" id="btnSkip">→ Omitir</button>
     </div>
   </div>
 
-  <!-- DONE -->
   <div class="done-state" id="doneState">
     <div class="done-icon">✅</div>
     <div class="done-title">¡Campaña completada!</div>
     <div class="done-sub" id="doneSub">—</div>
   </div>
 
-  <!-- HISTORY -->
   <div class="history-panel">
     <div class="panel-label">// Historial de envíos</div>
-    <div class="history-list" id="historyList">
+    <div class="history-list" id="histList">
       <div class="empty-history">Los envíos aparecerán aquí</div>
     </div>
   </div>
-
 </div>
 
-<!-- Google API -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://apis.google.com/js/api.js"></script>
-<script src="https://accounts.google.com/gsi/client"></script>
-
 <script>
-// ═══════════════════════════════════════════════
-// CONFIGURACIÓN
-// ═══════════════════════════════════════════════
-// IMPORTANTE: Para usar el modo automático necesitás:
-// 1. Crear un proyecto en console.cloud.google.com
-// 2. Habilitar Gmail API
-// 3. Crear credenciales OAuth 2.0 (tipo "Web application")
-// 4. Poner el Client ID abajo
-// 5. En "Authorized JavaScript origins" poner la URL donde abrís este archivo
+// ── CONFIG ──────────────────────────────────────
+var CLIENT_ID = '149070712813-djuli9g8d773l6op2i0nnnn4jjnshqkb.apps.googleusercontent.com';
+var SCOPES = 'https://www.googleapis.com/auth/gmail.send';
 
-const CLIENT_ID = '149070712813-djuli9g8d773l6op2i0nnnn4jjnshqkb.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/gmail.send';
+// ── STATE ────────────────────────────────────────
+var contacts = [];
+var idx = 0, sent = 0, omit = 0, errs = 0;
+var hist = [];
+var token = null;
+var delay = 3;
+var mode = 'auto';
+var running = false;
 
-// ═══════════════════════════════════════════════
-// ESTADO
-// ═══════════════════════════════════════════════
-let contacts = [], currentIndex = 0, sentCount = 0, skippedCount = 0, errorCount = 0;
-let history = [], accessToken = null, delaySeconds = 3, mode = 'auto', sending = false;
+// ── DOM REFS ─────────────────────────────────────
+function $(id){ return document.getElementById(id); }
 
-// ═══════════════════════════════════════════════
-// GMAIL AUTH
-// ═══════════════════════════════════════════════
+// ── INIT ─────────────────────────────────────────
+window.onload = function() {
+  $('btnLoad').onclick = loadContacts;
+  $('btnAll').onclick = sendAll;
+  $('btnReset').onclick = resetAll;
+  $('btnSkip').onclick = skipContact;
+  $('btnOne').onclick = sendOne;
+  $('btnCon').onclick = connectGmail;
+  $('btnDis').onclick = disconnectGmail;
+  $('modeA').onclick = function(){ setMode('auto'); };
+  $('modeM').onclick = function(){ setMode('manual'); };
+};
+
+// ── AUTH ─────────────────────────────────────────
 function connectGmail() {
-  if (CLIENT_ID === 'TU_CLIENT_ID_DE_GOOGLE_AQUI') {
-    alert('⚠️ Necesitás configurar el CLIENT_ID de Google.\n\nInstrucciones:\n1. Abrí console.cloud.google.com\n2. Creá un proyecto nuevo\n3. Habilitá "Gmail API"\n4. Creá credenciales OAuth 2.0\n5. Copiá el Client ID y pegalo en el código (línea ~148)\n\nO usá el modo MANUAL (mailto:) que no requiere configuración.');
+  if (!window.google) {
+    alert('Error: la librería de Google no cargó. Verificá tu conexión a internet y recargá la página.');
     return;
   }
-  const client = google.accounts.oauth2.initTokenClient({
+  var client = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: (response) => {
-      if (response.access_token) {
-        accessToken = response.access_token;
-        setConnected(true);
+    callback: function(resp) {
+      if (resp.access_token) {
+        token = resp.access_token;
+        $('authDot').className = 'auth-dot on';
+        $('authLabel').textContent = 'Gmail conectado ✓';
+        $('authSub').textContent = 'Listo para enviar emails automáticamente';
+        $('btnCon').style.display = 'none';
+        $('btnDis').style.display = 'inline-flex';
+        updateAllBtn();
       }
     }
   });
@@ -375,243 +312,253 @@ function connectGmail() {
 }
 
 function disconnectGmail() {
-  if (accessToken) google.accounts.oauth2.revoke(accessToken, () => {});
-  accessToken = null;
-  setConnected(false);
+  if (token) { try { google.accounts.oauth2.revoke(token); } catch(e){} }
+  token = null;
+  $('authDot').className = 'auth-dot';
+  $('authLabel').textContent = 'No conectado a Gmail';
+  $('authSub').textContent = 'Autenticá tu cuenta para enviar emails directamente';
+  $('btnCon').style.display = 'inline-flex';
+  $('btnDis').style.display = 'none';
+  updateAllBtn();
 }
 
-function setConnected(ok) {
-  document.getElementById('authDot').className = 'auth-dot' + (ok ? ' connected' : '');
-  document.getElementById('authLabel').textContent = ok ? 'Gmail conectado' : 'No conectado a Gmail';
-  document.getElementById('authEmail').textContent = ok ? 'Listo para enviar emails automáticamente' : 'Autenticá tu cuenta para enviar emails directamente';
-  document.getElementById('btnConnect').style.display = ok ? 'none' : 'block';
-  document.getElementById('btnDisconnect').style.display = ok ? 'block' : 'none';
-  updateSendAllBtn();
-}
-
-// ═══════════════════════════════════════════════
-// MODO
-// ═══════════════════════════════════════════════
+// ── MODE ─────────────────────────────────────────
 function setMode(m) {
   mode = m;
-  document.getElementById('modeAuto').className = 'mode-btn' + (m === 'auto' ? ' active' : '');
-  document.getElementById('modeManual').className = 'mode-btn' + (m === 'manual' ? ' active' : '');
-  document.getElementById('delayBar').style.display = m === 'auto' ? 'flex' : 'none';
-  updateSendAllBtn();
+  $('modeA').className = 'mode-btn' + (m === 'auto' ? ' on' : '');
+  $('modeM').className = 'mode-btn' + (m === 'manual' ? ' on' : '');
+  $('delayBar').style.display = m === 'auto' ? 'flex' : 'none';
+  updateAllBtn();
   if (contacts.length > 0) showCurrent();
 }
 
-function updateSendAllBtn() {
-  const btn = document.getElementById('btnSendAll');
-  btn.disabled = !(mode === 'auto' && accessToken && contacts.length > 0 && !sending);
+function updateAllBtn() {
+  $('btnAll').disabled = !(mode === 'auto' && token && contacts.length > 0 && !running);
 }
 
-// ═══════════════════════════════════════════════
-// DELAY
-// ═══════════════════════════════════════════════
+// ── DELAY ─────────────────────────────────────────
 function setDelay(s) {
-  delaySeconds = s;
-  ['d0','d3','d5','d10','d30'].forEach(id => {
-    document.getElementById(id).className = 'delay-btn' + (parseInt(id.replace('d','')) === s ? ' active' : '');
+  delay = s;
+  ['d0','d3','d5','d10','d30'].forEach(function(id) {
+    var n = parseInt(id.replace('d',''));
+    $(id).className = 'db' + (n === s ? ' on' : '');
   });
-  document.getElementById('delayWarn').textContent =
-    s === 0 ? '⚠️ Sin delay: mayor riesgo de ser marcado como spam' :
-    s <= 5 ? '⚡ Recomendado: 3-10 seg para evitar spam' :
-    '✓ Buena cadencia para evitar filtros de spam';
+  $('dWarn').textContent = s === 0 ? '⚠️ Sin delay: mayor riesgo de spam' : s <= 5 ? '⚡ Recomendado: 3-10 seg' : '✓ Buena cadencia';
 }
 
-// ═══════════════════════════════════════════════
-// CONTACTOS
-// ═══════════════════════════════════════════════
+// ── CONTACTOS ─────────────────────────────────────
 function parseContacts(raw) {
-  return raw.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0).map(line => {
-    const parts = line.split(',');
-    if (parts.length >= 2) {
-      const name = parts[0].trim();
-      const email = parts.slice(1).join(',').trim();
-      if (email.includes('@')) return { name, email };
+  var result = [];
+  var lines = raw.trim().split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    var comma = line.indexOf(',');
+    if (comma > 0) {
+      var name = line.substring(0, comma).trim();
+      var email = line.substring(comma + 1).trim();
+      if (email.indexOf('@') > 0) {
+        result.push({ name: name, email: email });
+      }
     }
-    return null;
-  }).filter(Boolean);
+  }
+  return result;
 }
 
 function loadContacts() {
-  const raw = document.getElementById('contactsInput').value;
+  var raw = $('inContacts').value;
   if (!raw.trim()) { alert('Ingresá al menos un contacto.'); return; }
   contacts = parseContacts(raw);
-  if (contacts.length === 0) { alert('No se encontraron emails válidos. Revisá el formato: Nombre, email@dominio.com'); return; }
-  currentIndex = 0; sentCount = 0; skippedCount = 0; errorCount = 0; history = [];
-  document.getElementById('historyList').innerHTML = '<div class="empty-history">Los envíos aparecerán aquí</div>';
-  updateSendAllBtn();
+  if (contacts.length === 0) { alert('No se encontraron emails válidos.\nFormato requerido: Nombre, email@dominio.com'); return; }
+  idx = 0; sent = 0; omit = 0; errs = 0; hist = [];
+  $('histList').innerHTML = '<div class="empty-history">Los envíos aparecerán aquí</div>';
+  updateAllBtn();
   showCurrent();
 }
 
-// ═══════════════════════════════════════════════
-// UI
-// ═══════════════════════════════════════════════
-function buildMessage(template, name) { return template.replace(/\{nombre\}/gi, name); }
+// ── UI ─────────────────────────────────────────────
+function msg(template, name) {
+  return template.replace(/\{nombre\}/gi, name);
+}
 
 function showCurrent() {
-  if (currentIndex >= contacts.length) {
-    document.getElementById('queueCard').classList.remove('active');
-    document.getElementById('doneState').style.display = 'block';
-    document.getElementById('doneSub').textContent = `Enviados: ${sentCount} | Omitidos: ${skippedCount} | Errores: ${errorCount} | Total: ${contacts.length}`;
-    updateStats(); return;
+  if (idx >= contacts.length) {
+    $('card').className = 'card';
+    $('doneState').style.display = 'block';
+    $('doneSub').textContent = 'Enviados: ' + sent + ' | Omitidos: ' + omit + ' | Errores: ' + errs + ' | Total: ' + contacts.length;
+    updateStats();
+    return;
   }
-  const c = contacts[currentIndex];
-  const subject = document.getElementById('subjectInput').value || 'AV MERCH';
-  const body = buildMessage(document.getElementById('messageInput').value, c.name);
+  var c = contacts[idx];
+  var subj = $('inSubject').value || 'AV MERCH';
+  var body = msg($('inMessage').value, c.name);
 
-  document.getElementById('qcName').textContent = c.name;
-  document.getElementById('qcEmail').textContent = c.email;
-  document.getElementById('qcIndex').textContent = `Contacto ${currentIndex + 1} de ${contacts.length}`;
-  document.getElementById('qcTag').textContent = currentIndex === 0 ? 'PRIMERO' : currentIndex === contacts.length - 1 ? 'ÚLTIMO' : 'SIGUIENTE';
-  document.getElementById('previewSubject').textContent = subject;
-  document.getElementById('previewTo').textContent = c.email;
-  document.getElementById('previewBody').textContent = body;
+  $('cName').textContent = c.name;
+  $('cEmail').textContent = c.email;
+  $('cIdx').textContent = 'Contacto ' + (idx + 1) + ' de ' + contacts.length;
+  $('cTag').textContent = idx === 0 ? 'PRIMERO' : idx === contacts.length - 1 ? 'ÚLTIMO' : 'SIGUIENTE';
+  $('pSubject').textContent = subj;
+  $('pTo').textContent = c.email;
+  $('pBody').textContent = body;
 
   if (mode === 'manual') {
-    document.getElementById('btnSendOne').textContent = '✉️ Abrir en Cliente de Email';
-    document.getElementById('btnSendOne').onclick = sendOneManual;
+    $('btnOne').textContent = '✉️ Abrir en Email';
+    $('btnOne').onclick = sendOneManual;
   } else {
-    document.getElementById('btnSendOne').textContent = '✉️ Enviar Este Email';
-    document.getElementById('btnSendOne').onclick = sendOne;
-    document.getElementById('btnSendOne').disabled = !accessToken;
+    $('btnOne').textContent = '✉️ Enviar Este Email';
+    $('btnOne').onclick = sendOne;
+    $('btnOne').disabled = !token;
   }
 
-  document.getElementById('queueCard').classList.add('active');
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('doneState').style.display = 'none';
+  $('card').className = 'card on';
+  $('emptyState').style.display = 'none';
+  $('doneState').style.display = 'none';
   updateStats();
 }
 
 function updateStats() {
-  const total = contacts.length, processed = sentCount + skippedCount + errorCount;
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statEnviados').textContent = sentCount;
-  document.getElementById('statOmitidos').textContent = skippedCount;
-  document.getElementById('statErrores').textContent = errorCount;
-  const pct = total > 0 ? Math.round((processed / total) * 100) : 0;
-  document.getElementById('progressPct').textContent = pct + '%';
-  document.getElementById('progressFill').style.width = pct + '%';
+  var total = contacts.length;
+  var done = sent + omit + errs;
+  $('sTotal').textContent = total;
+  $('sEnv').textContent = sent;
+  $('sOmi').textContent = omit;
+  $('sErr').textContent = errs;
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  $('pPct').textContent = pct + '%';
+  $('pFill').style.width = pct + '%';
 }
 
-function addHistory(name, email, status) {
-  history.unshift({ name, email, status });
-  const list = document.getElementById('historyList');
-  list.innerHTML = history.map(h => `
-    <div class="history-item">
-      <div class="h-dot ${h.status}"></div>
-      <div class="h-name">${h.name}</div>
-      <div class="h-email">${h.email}</div>
-      <div class="h-status ${h.status}">${h.status === 'sent' ? '✓ enviado' : h.status === 'skipped' ? 'omitido' : '✗ error'}</div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════
-// ENVÍO GMAIL API
-// ═══════════════════════════════════════════════
-function makeEmail(to, subject, body) {
-  const nl = '\r\n';
-  const raw = `To: ${to}${nl}Subject: =?utf-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=${nl}Content-Type: text/plain; charset=utf-8${nl}${nl}${body}`;
-  return btoa(unescape(encodeURIComponent(raw))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-async function sendEmailAPI(to, subject, body) {
-  const raw = makeEmail(to, subject, body);
-  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ raw })
-  });
-  if (!res.ok) throw new Error(`Error ${res.status}: ${await res.text()}`);
-  return true;
-}
-
-async function sendOne() {
-  if (!accessToken) { alert('Primero conectá tu cuenta de Gmail.'); return; }
-  const c = contacts[currentIndex];
-  const subject = document.getElementById('subjectInput').value || 'AV MERCH';
-  const body = buildMessage(document.getElementById('messageInput').value, c.name);
-  document.getElementById('btnSendOne').disabled = true;
-  try {
-    await sendEmailAPI(c.email, subject, body);
-    addHistory(c.name, c.email, 'sent');
-    sentCount++;
-  } catch(e) {
-    addHistory(c.name, c.email, 'error');
-    errorCount++;
-    console.error(e);
+function addHist(name, email, status) {
+  hist.unshift({ name: name, email: email, status: status });
+  var html = '';
+  for (var i = 0; i < hist.length; i++) {
+    var h = hist[i];
+    var label = h.status === 'sent' ? '✓ enviado' : h.status === 'skipped' ? 'omitido' : '✗ error';
+    html += '<div class="hi"><div class="hd ' + h.status + '"></div><div class="hn">' + h.name + '</div><div class="hem">' + h.email + '</div><div class="hs ' + h.status + '">' + label + '</div></div>';
   }
-  currentIndex++;
-  document.getElementById('btnSendOne').disabled = false;
-  showCurrent();
+  $('histList').innerHTML = html;
+}
+
+// ── SEND ───────────────────────────────────────────
+function makeRaw(to, subject, body) {
+  var nl = '\r\n';
+  var encoded = '';
+  try { encoded = btoa(unescape(encodeURIComponent(subject))); } catch(e) { encoded = btoa(subject); }
+  var raw = 'To: ' + to + nl + 'Subject: =?utf-8?B?' + encoded + '?=' + nl + 'Content-Type: text/plain; charset=utf-8' + nl + nl + body;
+  var b64 = '';
+  try { b64 = btoa(unescape(encodeURIComponent(raw))); } catch(e) { b64 = btoa(raw); }
+  return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+function sendEmailAPI(to, subject, body) {
+  return fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ raw: makeRaw(to, subject, body) })
+  }).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return true;
+  });
+}
+
+function sendOne() {
+  if (!token) { alert('Primero conectá tu cuenta de Gmail.'); return; }
+  var c = contacts[idx];
+  var subj = $('inSubject').value || 'AV MERCH';
+  var body = msg($('inMessage').value, c.name);
+  $('btnOne').disabled = true;
+  sendEmailAPI(c.email, subj, body).then(function() {
+    addHist(c.name, c.email, 'sent');
+    sent++;
+    idx++;
+    $('btnOne').disabled = false;
+    showCurrent();
+  }).catch(function(e) {
+    console.error(e);
+    addHist(c.name, c.email, 'error');
+    errs++;
+    idx++;
+    $('btnOne').disabled = false;
+    showCurrent();
+  });
 }
 
 function sendOneManual() {
-  const c = contacts[currentIndex];
-  const subject = document.getElementById('subjectInput').value || 'AV MERCH';
-  const body = buildMessage(document.getElementById('messageInput').value, c.name);
-  window.location.href = `mailto:${c.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  addHistory(c.name, c.email, 'sent');
-  sentCount++;
-  currentIndex++;
+  var c = contacts[idx];
+  var subj = $('inSubject').value || 'AV MERCH';
+  var body = msg($('inMessage').value, c.name);
+  window.location.href = 'mailto:' + c.email + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+  addHist(c.name, c.email, 'sent');
+  sent++; idx++;
   setTimeout(showCurrent, 500);
 }
 
-// ENVÍO MASIVO AUTOMÁTICO
-async function startSendAll() {
-  if (!accessToken) { alert('Primero conectá tu cuenta de Gmail.'); return; }
+function sendAll() {
+  if (!token) { alert('Primero conectá tu cuenta de Gmail.'); return; }
   if (contacts.length === 0) { alert('Cargá los contactos primero.'); return; }
-  const remaining = contacts.length - currentIndex;
-  if (!confirm(`¿Enviás emails a ${remaining} contacto${remaining !== 1 ? 's' : ''}?\n\nDelay configurado: ${delaySeconds} segundos entre cada email.\nTiempo estimado: ~${Math.ceil(remaining * delaySeconds / 60)} minutos.`)) return;
+  var remaining = contacts.length - idx;
+  var mins = Math.ceil(remaining * delay / 60);
+  if (!confirm('¿Enviar emails a ' + remaining + ' contacto' + (remaining !== 1 ? 's' : '') + '?\n\nDelay: ' + delay + ' segundos entre cada email\nTiempo estimado: ~' + mins + ' minuto' + (mins !== 1 ? 's' : ''))) return;
 
-  sending = true;
-  updateSendAllBtn();
-  const overlay = document.getElementById('sendingOverlay');
-  overlay.classList.add('active');
+  running = true;
+  updateAllBtn();
+  $('overlay').className = 'overlay on';
+  var subj = $('inSubject').value || 'AV MERCH';
 
-  const subject = document.getElementById('subjectInput').value || 'AV MERCH';
+  function next() {
+    if (idx >= contacts.length) {
+      $('overlay').className = 'overlay';
+      running = false;
+      showCurrent();
+      updateAllBtn();
+      return;
+    }
+    var c = contacts[idx];
+    var body = msg($('inMessage').value, c.name);
+    $('overlayText').textContent = 'Enviando ' + (idx + 1) + '/' + contacts.length + ': ' + c.name + '...';
 
-  while (currentIndex < contacts.length) {
-    const c = contacts[currentIndex];
-    const body = buildMessage(document.getElementById('messageInput').value, c.name);
-    document.getElementById('sendingText').textContent = `Enviando ${currentIndex + 1}/${contacts.length}: ${c.name}...`;
-    try {
-      await sendEmailAPI(c.email, subject, body);
-      addHistory(c.name, c.email, 'sent');
-      sentCount++;
-    } catch(e) {
-      addHistory(c.name, c.email, 'error');
-      errorCount++;
+    sendEmailAPI(c.email, subj, body).then(function() {
+      addHist(c.name, c.email, 'sent');
+      sent++; idx++;
+      updateStats();
+      if (delay > 0 && idx < contacts.length) {
+        var countdown = delay;
+        var timer = setInterval(function() {
+          $('overlayText').textContent = 'Próximo en ' + countdown + 's... (' + (idx + 1) + '/' + contacts.length + ')';
+          countdown--;
+          if (countdown < 0) { clearInterval(timer); next(); }
+        }, 1000);
+      } else { next(); }
+    }).catch(function(e) {
       console.error(e);
-    }
-    currentIndex++;
-    updateStats();
-    if (currentIndex < contacts.length && delaySeconds > 0) {
-      for (let i = delaySeconds; i > 0; i--) {
-        document.getElementById('sendingText').textContent = `Próximo en ${i}s... (${currentIndex + 1}/${contacts.length})`;
-        await new Promise(r => setTimeout(r, 1000));
-      }
-    }
+      addHist(c.name, c.email, 'error');
+      errs++; idx++;
+      updateStats();
+      next();
+    });
   }
-
-  overlay.classList.remove('active');
-  sending = false;
-  showCurrent();
-  updateSendAllBtn();
+  next();
 }
 
 function skipContact() {
-  const c = contacts[currentIndex];
-  addHistory(c.name, c.email, 'skipped');
-  skippedCount++; currentIndex++;
+  var c = contacts[idx];
+  addHist(c.name, c.email, 'skipped');
+  omit++; idx++;
   showCurrent();
 }
 
 function resetAll() {
-  contacts = []; currentIndex = 0; sentCount = 0; skippedCount = 0; errorCount = 0; history = [];
-  sending = false;
-  document.getElementById('queueCard').classList.remove('active');
-  document.getElementById('doneState').style.display = 'none';
-  document.getElement
+  contacts = []; idx = 0; sent = 0; omit = 0; errs = 0; hist = [];
+  running = false;
+  $('card').className = 'card';
+  $('doneState').style.display = 'none';
+  $('emptyState').style.display = 'block';
+  $('histList').innerHTML = '<div class="empty-history">Los envíos aparecerán aquí</div>';
+  updateStats();
+  updateAllBtn();
+}
+</script>
+
+<script src="https://accounts.google.com/gsi/client" async></script>
+</body>
+</html>
